@@ -58,8 +58,9 @@ process.source = cms.Source(
 eos_cmd = '/afs/cern.ch/project/eos/installation/ams/bin/eos.select'
 
 ## in_dir_name = '/store/relval/CMSSW_8_0_19/RelValNuGun_UP15/GEN-SIM-DIGI-RECO/PU25ns_80X_mcRun2_asymptotic_2016_TrancheIV_v2_Tr4GT_v2_FastSim-v1/00000/'
-in_dir_name = '/store/user/abrinke1/EMTF/MC/SingleMu_Pt1To1000_FlatRandomOneOverPt/'
+# in_dir_name = '/store/user/abrinke1/EMTF/MC/SingleMu_Pt1To1000_FlatRandomOneOverPt/'
 # in_dir_name = '/store/user/abrinke1/EMTF/MC/JPsiToMuMu_Pt20to120_EtaPhiRestricted-pythia8-gun/'
+in_dir_name = 'file:/afs/cern.ch/work/c/christiw/public/LLP/RunIISummer16_withISR/ppTohToSS1SS2_SS1Tobb_SS2Tobb_ggh_withISR_MC_prod/mh125_mx50_pl1000/'
 
 # nFiles = 0
 # for in_file_name in subprocess.check_output([eos_cmd, 'ls', in_dir_name]).splitlines():
@@ -68,6 +69,9 @@ in_dir_name = '/store/user/abrinke1/EMTF/MC/SingleMu_Pt1To1000_FlatRandomOneOver
 #     if nFiles < 1 or nFiles > 15: continue
 #     print in_file_name
 #     readFiles.extend( cms.untracked.vstring(in_dir_name+in_file_name) )
+
+in_file_name = 'ppTohToSS1SS2_SS1Tobb_SS2Tobb_ggh_withISR_DR_step1_1.root'
+readFiles.extend( cms.untracked.vstring(in_dir_name+in_file_name) )
 
 # dir_str = 'root://cms-xrd-global.cern.ch/'
 # dir_str += '/store/mc/RunIISpring16DR80/SingleMu_Pt1To1000_FlatRandomOneOverPt/GEN-SIM-RAW/NoPURAW_NZS_withHLT_80X_mcRun2_asymptotic_v14-v1/60000/'
@@ -237,7 +241,14 @@ process.ntuple = cms.EDAnalyzer('PtLutInput',
                                 emtfTrackTag  = cms.InputTag("simEmtfDigis"),  ## EMTF emulator output tracks
                                 )
 
-RawToDigi_AWB = cms.Sequence(process.simCscTriggerPrimitiveDigis+process.muonCSCDigis+process.muonRPCDigis+process.csctfDigis+process.simEmtfDigis+process.ntuple)
+RawToDigi_AWB = cms.Sequence(
+                             process.simCscTriggerPrimitiveDigis +
+                             process.muonCSCDigis +
+                             process.muonRPCDigis +
+                             process.csctfDigis +
+                             process.simEmtfDigis +
+                             process.ntuple 
+                            )
 process.raw2digi_step = cms.Path(RawToDigi_AWB)
 
 ## Defined in Configuration/StandardSequences/python/EndOfProcess_cff.py
@@ -257,12 +268,13 @@ process.endjob_step = cms.EndPath(process.endOfProcess)
 #     process.L1TMuonSeq
 #     )
 
-out_dir_name = '/afs/cern.ch/work/a/abrinke1/public/EMTF/Analyzer/ntuples/'
+# out_dir_name = '/afs/cern.ch/work/a/abrinke1/public/EMTF/Analyzer/ntuples/'
+out_dir_name = '/afs/cern.ch/user/n/nimenend/scratch2/CMSSW_10_4_0/src/GroupCounting/data/'
 
 ## NTuple output File
 process.TFileService = cms.Service(
     "TFileService",
-    fileName = cms.string('tuple.root')
+    fileName = cms.string(out_dir_name+'tuple.root')
     )
 
 

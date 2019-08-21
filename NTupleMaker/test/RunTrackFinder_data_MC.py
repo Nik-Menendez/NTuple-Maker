@@ -6,8 +6,10 @@ import sys
 import commands
 import subprocess
 from Configuration.StandardSequences.Eras import eras
+from Configuration.Eras.Era_Run2_2018_cff import Run2_2018
 
-process = cms.Process('L1TMuonEmulation')
+# process = cms.Process('L1TMuonEmulation')
+process = cms.Process('L1TMuonEmulation', eras.Run2_2016)
 
 # ## Verbose printouts of plugins
 # process.add_(cms.Service("PrintLoadingPlugins"))
@@ -32,8 +34,8 @@ process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 # process.Tracer = cms.Service("Tracer")
 
 # ## CSCTF digis, phi / pT LUTs?
-# process.load("L1TriggerConfig.L1ScalesProducers.L1MuTriggerScalesConfig_cff")
-# process.load("L1TriggerConfig.L1ScalesProducers.L1MuTriggerPtScaleConfig_cff")
+process.load("L1TriggerConfig.L1ScalesProducers.L1MuTriggerScalesConfig_cff")
+process.load("L1TriggerConfig.L1ScalesProducers.L1MuTriggerPtScaleConfig_cff")
 
 ## Import RECO muon configurations
 process.load("RecoMuon.TrackingTools.MuonServiceProxy_cff")
@@ -49,7 +51,7 @@ process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10) )
 process.options = cms.untracked.PSet(wantSummary = cms.untracked.bool(False))
 
 process.options = cms.untracked.PSet(
-    # SkipEvent = cms.untracked.vstring('ProductNotFound')
+    SkipEvent = cms.untracked.vstring('ProductNotFound')
 )
 
 ## Global Tags
@@ -62,8 +64,8 @@ from Configuration.AlCa.GlobalTag import GlobalTag
 
 # process.GlobalTag.globaltag = 'auto:run2_data'
 # process.GlobalTag.globaltag = '102X_dataRun2_Sep2018Rereco_v1'
-# process.GlobalTag.globaltag   = '101X_dataRun2_Prompt_v11'
-process.GlobalTag.globaltag = 'auto:run2_mc'
+process.GlobalTag.globaltag   = '101X_dataRun2_Prompt_v11'
+
 
 # ## Default parameters for firmware version, pT LUT XMLs, and coordinate conversion LUTs
 # # process.load('L1Trigger.L1TMuonEndCap.fakeEmtfParams_cff')
@@ -104,7 +106,7 @@ eos_cmd = '/afs/cern.ch/project/eos/installation/ams/bin/eos.select'
 # in_dir_name = '/store/data/Run2018C/Cosmics/RAW/v1/000/319/329/00000/'
 # in_dir_name = '/store/data/Run2018D/SingleMuon/RAW-RECO/ZMu-PromptReco-v2/000/321/988/00000/'
 # in_dir_name = '/store/data/Run2018D/ZeroBias/RAW/v1/000/323/487/00000/'
-# in_dir_name = '/store/data/Run2018D/SingleMuon/RAW-RECO/ZMu-PromptReco-v2/000/321/475/00000/'
+in_dir_name = 'file:/afs/cern.ch/work/c/christiw/public/LLP/RunIISummer16_withISR/ppTohToSS1SS2_SS1Tobb_SS2Tobb_ggh_withISR_MC_prod/mh125_mx50_pl1000/'
 
 # ## 2017 Cosmics, with RPC!
 # in_dir_name = '/store/express/Commissioning2017/ExpressCosmics/FEVT/Express-v1/000/291/622/ 00000/'
@@ -159,8 +161,9 @@ eos_cmd = '/afs/cern.ch/project/eos/installation/ams/bin/eos.select'
 #     # '/store/data/Run2017D/ZeroBiasIsolatedBunches1/RAW/v1/000/302/674/00000/2CAAAB2B-6C98-E711-912C-02163E01A61A.root'
 #     # ]
 
-# MC for fun
-in_dir_name = 'file:/afs/cern.ch/work/c/christiw/public/LLP/RunIISummer16_withISR/ppTohToSS1SS2_SS1Tobb_SS2Tobb_ggh_withISR_MC_prod/mh125_mx50_pl1000/'
+# in_file_name = 'ppTohToSS1SS2_SS1Tobb_SS2Tobb_ggh_withISR_GENSIM_step0_1.root'
+in_file_name = 'ppTohToSS1SS2_SS1Tobb_SS2Tobb_ggh_withISR_DR_step1_1.root'
+# in_file_name = 'ppTohToSS1SS2_SS1Tobb_SS2Tobb_ggh_withISR_AOD_step2_1.root'
 
 # iFile = 0
 # for in_file_name in subprocess.check_output([eos_cmd, 'ls', in_dir_name]).splitlines():
@@ -174,7 +177,6 @@ in_dir_name = 'file:/afs/cern.ch/work/c/christiw/public/LLP/RunIISummer16_withIS
 #     # in_dir_name_T0 = in_dir_name.replace('/eos/cms/tier0/', 'root://cms-xrd-tzero.cern.ch//')
 #     # readFiles.extend( cms.untracked.vstring(in_dir_name_T0+in_file_name) )
 
-in_file_name = 'ppTohToSS1SS2_SS1Tobb_SS2Tobb_ggh_withISR_DR_step1_1.root'
 readFiles.extend( cms.untracked.vstring(in_dir_name+in_file_name) )
 
 # readFiles.extend([
@@ -196,16 +198,16 @@ process.dumpES = cms.EDAnalyzer("PrintEventSetupContent")
 process.load('L1Trigger.CSCTriggerPrimitives.cscTriggerPrimitiveDigis_cfi')
 process.cscTriggerPrimitiveDigis.CSCComparatorDigiProducer = cms.InputTag('muonCSCDigis', 'MuonCSCComparatorDigi')
 process.cscTriggerPrimitiveDigis.CSCWireDigiProducer       = cms.InputTag('muonCSCDigis', 'MuonCSCWireDigi')
-process.cscTriggerPrimitiveDigis.commonParam = cms.PSet(
-    isTMB07 = cms.bool(True), ## Default
-    isMTCC = cms.bool(False), ## Default
-    isSLHC = cms.bool(False), ## Default
-    smartME1aME1b = cms.bool(False), ## Default
-    gangedME1a = cms.bool(False), ## Changed - why is this not default?
-    disableME1a = cms.bool(False), ## Default
-    disableME42 = cms.bool(False), ## Default
-    alctClctOffset = cms.uint32(1), ## Default
-)
+# process.cscTriggerPrimitiveDigis.commonParam = cms.PSet(
+#     isTMB07 = cms.bool(True), ## Default
+#     isMTCC = cms.bool(False), ## Default
+#     isSLHC = cms.bool(False), ## Default
+#     smartME1aME1b = cms.bool(False), ## Default
+#     gangedME1a = cms.bool(False), ## Changed - why is this not default?
+#     disableME1a = cms.bool(False), ## Default
+#     disableME42 = cms.bool(False), ## Default
+#     alctClctOffset = cms.uint32(1), ## Default
+# )
 
 ## EMTF Emulator
 process.load('EventFilter.L1TRawToDigi.emtfStage2Digis_cfi')
@@ -269,7 +271,6 @@ process.endjob_step = cms.EndPath(process.endOfProcess)
 
 # out_dir_name = '/afs/cern.ch/work/a/abrinke1/public/EMTF/Analyzer/ntuples/'
 # out_dir_name = '/afs/cern.ch/work/a/abrinke1/public/EMTF/Commissioning/2018/'
-# out_dir_name = './'
 out_dir_name = '/afs/cern.ch/user/n/nimenend/scratch2/CMSSW_10_4_0/src/GroupCounting/data/'
 
 ## NTuple output File
@@ -278,8 +279,7 @@ process.TFileService = cms.Service(
     # fileName = cms.string(out_dir_name+'EMTF_ZeroBias_NTuple_319077_FW_emul_CPPF_unp_simHit_1k.root')
     # fileName = cms.string(out_dir_name+'EMTF_ZeroBias_NTuple_319077_FW_emul_CPPF_unp_allHits_BX0_10k.root')
     # fileName = cms.string(out_dir_name+'EMTF_Cosmics_NTuple_319329_FW_emul_CPPF_unp_500k.root')
-    # fileName = cms.string(out_dir_name+'EMTF_ZMu_NTuple_322633_2018_emul_test.root')
-    fileName = cms.string(out_dir_name+'MC_data.root')
+    fileName = cms.string(out_dir_name+'data_MC.root')
     )
 
 
@@ -319,9 +319,8 @@ outCommands = cms.untracked.vstring(
 process.treeOut = cms.OutputModule("PoolOutputModule", 
                                    # fileName = cms.untracked.string("EMTF_MC_Tree_RelValNuGun_UP15_1k.root"),
                                    # fileName = cms.untracked.string("EMTF_MC_Tree_tau_to_3_mu_RPC_debug.root"),
-                                   # fileName = cms.untracked.string(out_dir_name+'EMTF_ZMu_Tree_306091_simHit_test.root')
-                                   fileName = cms.untracked.string(out_dir_name+'data.root')
-                                   #outputCommands = outCommands
+                                   fileName = cms.untracked.string(out_dir_name+'data_MC.root'),
+                                   outputCommands = outCommands
                                    )
 
 

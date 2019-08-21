@@ -224,6 +224,7 @@ void FlatNtuple::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
       emtfSimHitInfo.Fill(emtfSimHit);
     } // End for (l1t::EMTFHit emtfSimHit: *emtfSimHits)
   }
+  else if (isMC) { }
   else {
     std::cout << "ERROR: could not get emtfSimHits from event!!!" << std::endl;
     return;
