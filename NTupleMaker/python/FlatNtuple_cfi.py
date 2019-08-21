@@ -4,7 +4,7 @@ FlatNtupleMC = cms.EDAnalyzer('FlatNtuple',
                               isMC             = cms.bool(True),
                               isReco           = cms.bool(False),
                               skimTrig         = cms.bool(False), # Discard events with too few triggering muons
-                              skimEmtf         = cms.bool(True), # Discard events with no EMTF tracks in BX 0
+                              skimEmtf         = cms.bool(False), # Discard events with no EMTF tracks in BX 0
                               skimPair         = cms.bool(False), # Discard events with no RECO muon pairs
 
                               genMuonTag       = cms.InputTag("genParticles"),
