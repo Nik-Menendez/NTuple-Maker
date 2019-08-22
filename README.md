@@ -16,10 +16,10 @@ git cms-addpkg L1Trigger/L1TMuonEndCap\
 git cms-addpkg EventFilter/L1TRawToDigi
 
 git cms-init\
-git remote add cms-sw https://github.com/cms-sw/cmssw.git\
+git remote add cms-sw https://github.com/cms-sw/cmssw.git \
 git fetch cms-sw
  
-git remote add abrinke1 https://github.com/abrinke1/cmssw.git\
+git remote add abrinke1 https://github.com/abrinke1/cmssw.git \
 git fetch abrinke1
 
 git checkout -b YourBranchName1\
