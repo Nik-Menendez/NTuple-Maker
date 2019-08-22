@@ -4,6 +4,7 @@ Analysis tools for EMTF
 To setup the NTuple maker:
 
 Log into lxplus\
+ssh lxplus6\
 setenv SCRAM_ARCH slc6_amd64_gcc630 (or export SCRAM_ARCH=slc6_amd64_gcc630)\
 cmsrel CMSSW_10_4_0\
 cd CMSSW_10_0_0/src\
@@ -41,4 +42,5 @@ Edit that file on lines 64 and 69 to choose the input file. And line 244 to choo
 
 To run the NTuple Maker on Monte Carlo:
 
+Make sure you're on lxplus6 (ssh lxplus6)\
 cmsRun test/RunTrackFinder_MC_NTuple.py
